@@ -27,11 +27,11 @@ const Footer = ({ totalCallCount }) => {
       }}
     >
       <div style={iconStyle}>
-        <FaPhone />
+        <FaPhone color="blue" />
         <div style={badgeStyle}>{totalCallCount}</div>
       </div>
-      <FaAddressBook style={iconStyle} />
-      <FaKeyboard style={iconStyle} />
+      <FaAddressBook style={iconStyle} color="brown" />
+      <FaKeyboard style={iconStyle} color="green" />
       <FaCog style={iconStyle} />
     </div>
   );

@@ -51,7 +51,11 @@ const Call = ({ callData, callCount, lastReceivedTime, selectedCallType }) => {
         onClick={handleCallClick}
       >
         <div style={{ width: "5%", padding: "10px", cursor: "pointer" }}>
-          {isIncomingCall ? <FaPhone /> : <FaPhoneAlt />}
+          {isIncomingCall ? (
+            <FaPhone color="red" />
+          ) : (
+            <FaPhoneAlt color="green" />
+          )}
         </div>
         <div style={{ width: "80%", padding: "10px" }}>
           <div>
