@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Call from "./Call";
+import Footer from "./Footer";
 
 const CallList = ({ selectedCallType }) => {
   const baseAPIURL = "https://cerulean-marlin-wig.cyclic.app/";
@@ -100,7 +101,8 @@ const CallList = ({ selectedCallType }) => {
     }
   };
 
-  const groupCallsByDate = (calls) => {
+  const groupCallsByDate = (calls, getTotal = false) => {
+    let total = 0;
     const sortedCalls = calls.sort(
       (a, b) => new Date(b.created_at) - new Date(a.created_at)
     );
@@ -117,8 +119,10 @@ const CallList = ({ selectedCallType }) => {
           groupedCalls[callDate] = [];
         }
         groupedCalls[callDate].push(call);
+        total++;
       }
     });
+    if (getTotal) return total;
     return groupedCalls;
   };
 
@@ -191,6 +195,9 @@ const CallList = ({ selectedCallType }) => {
       >
         {renderCallGroups(groupCallsByDate(getSelectedCalls()))}
       </div>
+      <Footer
+        totalCallCount={groupCallsByDate(getSelectedCalls(), true) || 0}
+      />
     </div>
   );
 };

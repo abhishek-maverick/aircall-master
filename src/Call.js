@@ -2,8 +2,7 @@ import React, { useState } from "react";
 import { FaPhone, FaPhoneAlt, FaArchive } from "react-icons/fa";
 
 const Call = ({ callData, callCount, lastReceivedTime }) => {
-  const baseAPIURL =
-    "https://charming-bat-singlet.cyclic.app/https://cerulean-marlin-wig.cyclic.app/";
+  const baseAPIURL = "https://cerulean-marlin-wig.cyclic.app/";
   const [showDetails, setShowDetails] = useState(false);
   const [isArchived, setIsArchived] = useState(callData.is_archived || false);
   const isIncomingCall = callData.direction === "inbound";

@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import ReactDOM from "react-dom";
 import Body from "./Body.js";
 import CallTypeSelector from "./CallTypeSelector.js";
+import Footer from "./Footer.js";
 import Header from "./Header.jsx";
 
 const App = () => {
