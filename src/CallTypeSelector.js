@@ -18,7 +18,7 @@ const CallTypeSelector = ({ selectedCallType, setSelectedCall }) => {
             padding: "10px",
             cursor: "pointer",
             borderBottom:
-              selectedCallType === callType ? "2px solid blue" : "none",
+              selectedCallType === callType ? "2px solid red" : "none",
           }}
           onClick={() => setSelectedCall(callType)}
         >

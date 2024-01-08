@@ -1,70 +1,196 @@
 import React, { useState, useEffect } from "react";
+import Call from "./Call";
 
-const CallList = () => {
+const CallList = ({ selectedCallType }) => {
   const baseAPIURL = "https://cerulean-marlin-wig.cyclic.app/";
-  const calls = ["Inbox", "Archived", "All Calls"];
-  const [selectedCallType, setSelectedCallType] = useState("Inbox");
-  const [listItems, setListItems] = useState([]);
-  const [totalItems, setTotalItems] = useState(0);
-  const [hasMoreItems, setHasMoreItems] = useState(true); // New state variable
-  const itemHeight = 50; // Set the height of each list item
+  const [inbox, setInbox] = useState([]);
+  const [archived, setArchived] = useState([]);
 
   useEffect(() => {
-    // Simulate fetching all data once
     getCallLogs();
   }, []);
 
   const getCallLogs = async () => {
-    console.log("inside getdata");
     const data = await fetch(baseAPIURL + "activities");
     const json = await data.json();
-    console.log("received data is");
-    console.log(json);
-    setListItems(json);
-    setTotalItems(json?.length || 10);
-    setHasMoreItems(false); // Set to false when all data is loaded
+
+    const inboxCalls = json?.filter((call) => call.is_archived !== true);
+    const archivedCalls = json?.filter((call) => call.is_archived === true);
+
+    setInbox(inboxCalls);
+    setArchived(archivedCalls);
   };
 
-  const handleScroll = (e) => {
-    const container = e.target;
-    const scrollTop = container.scrollTop;
-    const containerHeight = container.clientHeight;
-    const contentHeight = container.scrollHeight;
+  const handleReset = async () => {
+    try {
+      const archivePromises = archived.map(async (call) => {
+        const response = await fetch(`${baseAPIURL}/reset`, {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          // body: JSON.stringify({
+          //   is_archived: false, // Unarchive
+          // }),
+        });
+        const json = await response.json();
+        console.log(json);
 
-    // Check if the user has reached the bottom of the container and there are more items to fetch
-    if (scrollTop + containerHeight >= contentHeight - 10 && hasMoreItems) {
-      // Simulate fetching more data
-      const newData = Array.from({ length: 10 }, (_, index) => {
-        const newItemIndex = listItems.length + index + 1;
-        return `List Item ${newItemIndex}`;
+        if (!response.ok) {
+          console.error(`Failed to unarchive call with ID ${call.id}`);
+        }
       });
 
-      setListItems((prevItems) => [...prevItems, ...newData]);
+      await Promise.all(archivePromises);
+      getCallLogs();
+    } catch (error) {
+      console.error("Error during the unarchive request:", error);
+    }
+  };
+  const handleArchiveAll = async () => {
+    try {
+      const archivePromises = archived.map(async (call) => {
+        const response = await fetch(`${baseAPIURL}/reset`, {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          // body: JSON.stringify({
+          //   is_archived: false, // Unarchive
+          // }),
+        });
+        const json = await response.json();
+        console.log(json);
+
+        if (!response.ok) {
+          console.error(`Failed to unarchive call with ID ${call.id}`);
+        }
+      });
+
+      await Promise.all(archivePromises);
+      getCallLogs();
+    } catch (error) {
+      console.error("Error during the unarchive request:", error);
+    }
+  };
+  const handleUnarchiveAll = async () => {
+    try {
+      const archivePromises = archived.map(async (call) => {
+        const response = await fetch(`${baseAPIURL}/reset`, {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          // body: JSON.stringify({
+          //   is_archived: false, // Unarchive
+          // }),
+        });
+        const json = await response.json();
+        console.log(json);
+
+        if (!response.ok) {
+          console.error(`Failed to unarchive call with ID ${call.id}`);
+        }
+      });
+
+      await Promise.all(archivePromises);
+      getCallLogs();
+    } catch (error) {
+      console.error("Error during the unarchive request:", error);
+    }
+  };
+
+  const groupCallsByDate = (calls) => {
+    const sortedCalls = calls.sort(
+      (a, b) => new Date(b.created_at) - new Date(a.created_at)
+    );
+
+    const groupedCalls = {};
+    sortedCalls.forEach((call) => {
+      if (call.from && call.to) {
+        const options = { month: "long", day: "numeric", year: "numeric" };
+        const callDate = new Date(call.created_at).toLocaleString(
+          "en-US",
+          options
+        );
+        if (!groupedCalls[callDate]) {
+          groupedCalls[callDate] = [];
+        }
+        groupedCalls[callDate].push(call);
+      }
+    });
+    return groupedCalls;
+  };
+
+  const renderCallGroups = (callGroups) => {
+    const result = [];
+    for (const date in callGroups) {
+      result.push(
+        <div key={date}>
+          <div
+            style={{
+              textAlign: "center",
+              fontWeight: "bold",
+              fontSize: "14px",
+              margin: "10px 0",
+            }}
+          >
+            {date}
+          </div>
+          {callGroups[date].map((call, index) => (
+            <Call
+              key={index}
+              callData={call}
+              callCount={getCallCount(call.from)}
+              lastReceivedTime={getLastReceivedTime(call.from)}
+            />
+          ))}
+        </div>
+      );
+    }
+    return result;
+  };
+
+  const getCallCount = (from) => {
+    // implement count
+    return 1;
+  };
+
+  const getLastReceivedTime = (from) => {
+    return new Date().toISOString(); // get logic
+  };
+
+  const getSelectedCalls = () => {
+    switch (selectedCallType) {
+      case "Inbox":
+        return inbox;
+      case "Archived":
+        return archived;
+      default:
+        return [...inbox, ...archived];
     }
   };
 
   return (
-    <div
-      style={{
-        height: "555px", // Set the height of your container
-        overflowY: "scroll",
-        border: "1px solid #ccc",
-      }}
-      onScroll={handleScroll}
-    >
-      <ul
+    <div>
+      <div style={{ display: "flex", justifyContent: "space-between" }}>
+        {selectedCallType === "Archived" && (
+          <button onClick={handleUnarchiveAll}>Unarchive All</button>
+        )}
+        {selectedCallType === "Inbox" && (
+          <button onClick={handleArchiveAll}>Archive All</button>
+        )}
+        <button onClick={handleReset}>Reset</button>
+      </div>
+      <div
         style={{
-          margin: 0,
-          padding: 0,
-          listStyle: "none",
+          height: "555px",
+          overflowY: "scroll",
+          border: "1px solid #ccc",
         }}
       >
-        {listItems.map((item, index) => (
-          <li key={index} style={{ height: `${itemHeight}px` }}>
-            {item?.from || "unknown"}
-          </li>
-        ))}
-      </ul>
+        {renderCallGroups(groupCallsByDate(getSelectedCalls()))}
+      </div>
     </div>
   );
 };
