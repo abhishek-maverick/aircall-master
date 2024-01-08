@@ -1,9 +1,6 @@
-// CallDetails.js
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
 
-const CallDetails = () => {
-  const { id } = useParams();
+const CallDetails = ({ id }) => {
   const [callDetails, setCallDetails] = useState(null);
 
   useEffect(() => {

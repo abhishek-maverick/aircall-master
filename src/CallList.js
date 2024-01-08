@@ -14,6 +14,7 @@ const CallList = ({ selectedCallType }) => {
   const getCallLogs = async () => {
     const data = await fetch(baseAPIURL + "activities");
     const json = await data.json();
+    console.log(json);
 
     const inboxCalls = json?.filter((call) => call.is_archived !== true);
     const archivedCalls = json?.filter((call) => call.is_archived === true);

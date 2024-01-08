@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { FaPhone, FaPhoneAlt, FaArchive, FaUndo } from "react-icons/fa";
+import CallDetails from "./CallDetails";
 
 const Call = ({ callData, callCount, lastReceivedTime, selectedCallType }) => {
   const baseAPIURL = "https://cerulean-marlin-wig.cyclic.app/";
@@ -11,11 +12,12 @@ const Call = ({ callData, callCount, lastReceivedTime, selectedCallType }) => {
   });
 
   const handleCallClick = () => {
-    // Navigate to CallDetails component with the call ID
-    // navigate(`/call/${callData.id}`);
+    // if(!)
+    setShowDetails(!showDetails);
   };
 
-  const handleArchiveClick = async () => {
+  const handleArchiveClick = async (e) => {
+    e.stopPropagation();
     try {
       const response = await fetch(`${baseAPIURL}/activities/${callData.id}`, {
         method: "PATCH",
@@ -28,9 +30,9 @@ const Call = ({ callData, callCount, lastReceivedTime, selectedCallType }) => {
       });
 
       if (response.ok) {
-        console.log("query successful");
+        console.log("Archive status updated successfully");
+        setShowDetails(false);
       } else {
-        // Handle error response
         console.error("Failed to update archive status for the call.");
       }
     } catch (error) {
@@ -45,11 +47,9 @@ const Call = ({ callData, callCount, lastReceivedTime, selectedCallType }) => {
         marginBottom: "10px",
         display: "flex",
       }}
+      onClick={handleCallClick}
     >
-      <div
-        onClick={handleCallClick}
-        style={{ width: "5%", padding: "10px", cursor: "pointer" }}
-      >
+      <div style={{ width: "5%", padding: "10px", cursor: "pointer" }}>
         {isIncomingCall ? <FaPhone /> : <FaPhoneAlt />}
       </div>
       <div style={{ width: "80%", padding: "10px" }}>
@@ -88,6 +88,13 @@ const Call = ({ callData, callCount, lastReceivedTime, selectedCallType }) => {
           <FaArchive title="Archive" />
         )}
       </div>
+      {showDetails && (
+        <div style={{ width: "100%", padding: "10px" }}>
+          <div>
+            <CallDetails id={callData.id} />
+          </div>
+        </div>
+      )}
     </div>
   );
 };
