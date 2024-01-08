@@ -41,52 +41,54 @@ const Call = ({ callData, callCount, lastReceivedTime, selectedCallType }) => {
   };
 
   return (
-    <div
-      style={{
-        border: "1px solid #ccc",
-        marginBottom: "10px",
-        display: "flex",
-      }}
-      onClick={handleCallClick}
-    >
-      <div style={{ width: "5%", padding: "10px", cursor: "pointer" }}>
-        {isIncomingCall ? <FaPhone /> : <FaPhoneAlt />}
-      </div>
-      <div style={{ width: "80%", padding: "10px" }}>
-        <div>
-          <strong>{callData.from}</strong>{" "}
-          <div
-            style={{
-              display: "inline-block",
-              backgroundColor: "red",
-              color: "white",
-              borderRadius: "50%",
-              padding: "5px",
-              marginLeft: "5px",
-            }}
-          >
-            {callCount}
-          </div>
-        </div>
-        <div>tried calling on: {callData.to}</div>
-      </div>
-      <div style={{ width: "10%", padding: "10px", textAlign: "right" }}>
-        {receivedTime}
-      </div>
+    <>
       <div
         style={{
-          width: "5%",
-          padding: "10px",
-          textAlign: "right",
-          cursor: "pointer",
+          border: "1px solid #ccc",
+          marginBottom: "10px",
+          display: "flex",
         }}
-        onClick={handleArchiveClick}
+        onClick={handleCallClick}
       >
-        {callData.is_archived ? (
-          <FaUndo title="Unarchive" />
-        ) : (
-          <FaArchive title="Archive" />
-        )}
+        <div style={{ width: "5%", padding: "10px", cursor: "pointer" }}>
+          {isIncomingCall ? <FaPhone /> : <FaPhoneAlt />}
+        </div>
+        <div style={{ width: "80%", padding: "10px" }}>
+          <div>
+            <strong>{callData.from}</strong>{" "}
+            <div
+              style={{
+                display: "inline-block",
+                backgroundColor: "red",
+                color: "white",
+                borderRadius: "50%",
+                padding: "5px",
+                marginLeft: "5px",
+              }}
+            >
+              {callCount}
+            </div>
+          </div>
+          <div>tried calling on: {callData.to}</div>
+        </div>
+        <div style={{ width: "10%", padding: "10px", textAlign: "right" }}>
+          {receivedTime}
+        </div>
+        <div
+          style={{
+            width: "5%",
+            padding: "10px",
+            textAlign: "right",
+            cursor: "pointer",
+          }}
+          onClick={handleArchiveClick}
+        >
+          {callData.is_archived ? (
+            <FaUndo title="Unarchive" />
+          ) : (
+            <FaArchive title="Archive" />
+          )}
+        </div>
       </div>
       {showDetails && (
         <div style={{ width: "100%", padding: "10px" }}>
@@ -95,7 +97,7 @@ const Call = ({ callData, callCount, lastReceivedTime, selectedCallType }) => {
           </div>
         </div>
       )}
-    </div>
+    </>
   );
 };
 
