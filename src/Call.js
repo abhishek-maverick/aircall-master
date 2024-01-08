@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { FaPhone, FaPhoneAlt, FaArchive, FaUndo } from "react-icons/fa";
 import CallDetails from "./CallDetails";
+import { baseAPIURL } from "./constants";
 
 const Call = ({ callData, callCount, lastReceivedTime, selectedCallType }) => {
-  const baseAPIURL = "https://cerulean-marlin-wig.cyclic.app/";
   const [showDetails, setShowDetails] = useState(false);
   const isIncomingCall = callData.direction === "inbound";
   const receivedTime = new Date(lastReceivedTime).toLocaleTimeString([], {
@@ -19,7 +19,7 @@ const Call = ({ callData, callCount, lastReceivedTime, selectedCallType }) => {
   const handleArchiveClick = async (e) => {
     e.stopPropagation();
     try {
-      const response = await fetch(`${baseAPIURL}/activities/${callData.id}`, {
+      const response = await fetch(`${baseAPIURL}activities/${callData.id}`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",

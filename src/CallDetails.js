@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { baseAPIURL } from "./constants";
 
 const CallDetails = ({ id }) => {
   const [callDetails, setCallDetails] = useState(null);
@@ -6,9 +7,7 @@ const CallDetails = ({ id }) => {
   useEffect(() => {
     const fetchCallDetails = async () => {
       try {
-        const response = await fetch(
-          `https://cerulean-marlin-wig.cyclic.app/activities/${id}`
-        );
+        const response = await fetch(`${baseAPIURL}activities/${id}`);
         const data = await response.json();
         setCallDetails(data);
       } catch (error) {

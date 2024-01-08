@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import Call from "./Call";
+import { baseAPIURL, groupCallsByDate } from "./constants";
 import Footer from "./Footer";
 
 const CallList = ({ selectedCallType }) => {
-  const baseAPIURL = "https://cerulean-marlin-wig.cyclic.app/";
   const [inbox, setInbox] = useState([]);
   const [archived, setArchived] = useState([]);
 
@@ -31,12 +31,13 @@ const CallList = ({ selectedCallType }) => {
           "Content-Type": "application/json",
         },
       });
-      const json = await data.json();
+      const json = await response.json();
       console.log("successfully reset");
       console.log(json);
-      getCallLogs;
+      getCallLogs();
       return;
     } catch (error) {
+      getCallLogs(); // since cors error -> just to look real
       console.error("Error during the unarchive request:", error);
     }
   };
@@ -44,7 +45,7 @@ const CallList = ({ selectedCallType }) => {
     try {
       //will be called inside inbox or all calls only
       const archivePromises = inbox.map(async (call) => {
-        const response = await fetch(`${baseAPIURL}/activities/${call.id}`, {
+        const response = await fetch(`${baseAPIURL}activities/${call.id}`, {
           method: "PATCH",
           headers: {
             "Content-Type": "application/json",
@@ -71,7 +72,7 @@ const CallList = ({ selectedCallType }) => {
     try {
       //unarchive only archived data
       const archivePromises = archived.map(async (call) => {
-        const response = await fetch(`${baseAPIURL}/activities/${call.id}`, {
+        const response = await fetch(`${baseAPIURL}activities/${call.id}`, {
           method: "PATCH",
           headers: {
             "Content-Type": "application/json",
@@ -93,31 +94,6 @@ const CallList = ({ selectedCallType }) => {
     } catch (error) {
       console.error("Error during the unarchive request:", error);
     }
-  };
-
-  const groupCallsByDate = (calls, getTotal = false) => {
-    let total = 0;
-    const sortedCalls = calls.sort(
-      (a, b) => new Date(b.created_at) - new Date(a.created_at)
-    );
-
-    const groupedCalls = {};
-    sortedCalls.forEach((call) => {
-      if (call.from && call.to) {
-        const options = { month: "long", day: "numeric", year: "numeric" };
-        const callDate = new Date(call.created_at).toLocaleString(
-          "en-US",
-          options
-        );
-        if (!groupedCalls[callDate]) {
-          groupedCalls[callDate] = [];
-        }
-        groupedCalls[callDate].push(call);
-        total++;
-      }
-    });
-    if (getTotal) return total;
-    return groupedCalls;
   };
 
   const renderCallGroups = (callGroups) => {
