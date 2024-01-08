@@ -9,7 +9,7 @@
   "private": false,
   "scripts": {
     "start": "react-scripts --openssl-legacy-provider start",
-    "build": "webpack --mode production"
+    "build": "react-scripts build"
   },
   "dependencies": {
     "postcss": "^8.4.32",
