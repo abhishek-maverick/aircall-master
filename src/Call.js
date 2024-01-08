@@ -1,10 +1,9 @@
 import React, { useState } from "react";
-import { FaPhone, FaPhoneAlt, FaArchive } from "react-icons/fa";
+import { FaPhone, FaPhoneAlt, FaArchive, FaUndo } from "react-icons/fa";
 
-const Call = ({ callData, callCount, lastReceivedTime }) => {
+const Call = ({ callData, callCount, lastReceivedTime, selectedCallType }) => {
   const baseAPIURL = "https://cerulean-marlin-wig.cyclic.app/";
   const [showDetails, setShowDetails] = useState(false);
-  const [isArchived, setIsArchived] = useState(callData.is_archived || false);
   const isIncomingCall = callData.direction === "inbound";
   const receivedTime = new Date(lastReceivedTime).toLocaleTimeString([], {
     hour: "2-digit",
@@ -12,11 +11,11 @@ const Call = ({ callData, callCount, lastReceivedTime }) => {
   });
 
   const handleCallClick = () => {
+    // Navigate to CallDetails component with the call ID
     // navigate(`/call/${callData.id}`);
   };
 
   const handleArchiveClick = async () => {
-    // PATCH
     try {
       const response = await fetch(`${baseAPIURL}/activities/${callData.id}`, {
         method: "PATCH",
@@ -24,19 +23,18 @@ const Call = ({ callData, callCount, lastReceivedTime }) => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          is_archived: true,
+          is_archived: !callData.is_archived,
         }),
       });
 
       if (response.ok) {
-        setIsArchived(true);
-        // can show notification
+        console.log("query successful");
       } else {
         // Handle error response
-        console.error("Failed to archive the call.");
+        console.error("Failed to update archive status for the call.");
       }
     } catch (error) {
-      console.error("Error during the archive request:", error);
+      console.error("Error during the archive/unarchive request:", error);
     }
   };
 
@@ -54,7 +52,7 @@ const Call = ({ callData, callCount, lastReceivedTime }) => {
       >
         {isIncomingCall ? <FaPhone /> : <FaPhoneAlt />}
       </div>
-      <div style={{ width: "60%", padding: "10px" }}>
+      <div style={{ width: "80%", padding: "10px" }}>
         <div>
           <strong>{callData.from}</strong>{" "}
           <div
@@ -72,20 +70,23 @@ const Call = ({ callData, callCount, lastReceivedTime }) => {
         </div>
         <div>tried calling on: {callData.to}</div>
       </div>
-      <div style={{ width: "25%", padding: "10px", textAlign: "right" }}>
+      <div style={{ width: "10%", padding: "10px", textAlign: "right" }}>
         {receivedTime}
       </div>
       <div
         style={{
-          width: "10%",
+          width: "5%",
           padding: "10px",
           textAlign: "right",
           cursor: "pointer",
-          // visibility: !showDetails ? "visible" : "hidden",
         }}
         onClick={handleArchiveClick}
       >
-        <FaArchive title="Archive" />
+        {callData.is_archived ? (
+          <FaUndo title="Unarchive" />
+        ) : (
+          <FaArchive title="Archive" />
+        )}
       </div>
     </div>
   );

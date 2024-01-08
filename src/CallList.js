@@ -24,41 +24,33 @@ const CallList = ({ selectedCallType }) => {
 
   const handleReset = async () => {
     try {
-      const archivePromises = archived.map(async (call) => {
-        const response = await fetch(`${baseAPIURL}/reset`, {
-          method: "PATCH",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          // body: JSON.stringify({
-          //   is_archived: false, // Unarchive
-          // }),
-        });
-        const json = await response.json();
-        console.log(json);
-
-        if (!response.ok) {
-          console.error(`Failed to unarchive call with ID ${call.id}`);
-        }
+      const response = await fetch(baseAPIURL + "reset", {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
       });
-
-      await Promise.all(archivePromises);
-      getCallLogs();
+      const json = await data.json();
+      console.log("successfully reset");
+      console.log(json);
+      getCallLogs;
+      return;
     } catch (error) {
       console.error("Error during the unarchive request:", error);
     }
   };
   const handleArchiveAll = async () => {
     try {
-      const archivePromises = archived.map(async (call) => {
-        const response = await fetch(`${baseAPIURL}/reset`, {
+      //will be called inside inbox or all calls only
+      const archivePromises = inbox.map(async (call) => {
+        const response = await fetch(`${baseAPIURL}/activities/${call.id}`, {
           method: "PATCH",
           headers: {
             "Content-Type": "application/json",
           },
-          // body: JSON.stringify({
-          //   is_archived: false, // Unarchive
-          // }),
+          body: JSON.stringify({
+            is_archived: true, // Archive
+          }),
         });
         const json = await response.json();
         console.log(json);
@@ -76,15 +68,16 @@ const CallList = ({ selectedCallType }) => {
   };
   const handleUnarchiveAll = async () => {
     try {
+      //unarchive only archived data
       const archivePromises = archived.map(async (call) => {
-        const response = await fetch(`${baseAPIURL}/reset`, {
+        const response = await fetch(`${baseAPIURL}/activities/${call.id}`, {
           method: "PATCH",
           headers: {
             "Content-Type": "application/json",
           },
-          // body: JSON.stringify({
-          //   is_archived: false, // Unarchive
-          // }),
+          body: JSON.stringify({
+            is_archived: false, // Unarchive
+          }),
         });
         const json = await response.json();
         console.log(json);
@@ -147,6 +140,7 @@ const CallList = ({ selectedCallType }) => {
               callData={call}
               callCount={getCallCount(call.from)}
               lastReceivedTime={getLastReceivedTime(call.from)}
+              selectedCallType={selectedCallType}
             />
           ))}
         </div>
@@ -178,10 +172,9 @@ const CallList = ({ selectedCallType }) => {
   return (
     <div>
       <div style={{ display: "flex", justifyContent: "space-between" }}>
-        {selectedCallType === "Archived" && (
+        {selectedCallType === "Archived" ? (
           <button onClick={handleUnarchiveAll}>Unarchive All</button>
-        )}
-        {selectedCallType === "Inbox" && (
+        ) : (
           <button onClick={handleArchiveAll}>Archive All</button>
         )}
         <button onClick={handleReset}>Reset</button>
