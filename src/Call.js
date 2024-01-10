@@ -12,7 +12,6 @@ const Call = ({ callData, callCount, lastReceivedTime, selectedCallType }) => {
   });
 
   const handleCallClick = () => {
-    // if(!)
     setShowDetails(!showDetails);
   };
 
